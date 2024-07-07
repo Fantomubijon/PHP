@@ -12,6 +12,15 @@ if (session_status() == PHP_SESSION_NONE) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2.0/dist/css/adminlte.min.css">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+    <style>
+        /* Custom CSS for sidebar height */
+        .sidebar {
+            height: 100vh; /* Set sidebar height to full viewport height */
+            overflow-y: auto; /* Enable vertical scrolling if needed */
+        }
+    </style>
+
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
@@ -62,12 +71,6 @@ if (session_status() == PHP_SESSION_NONE) {
                 <!-- Sidebar Menu -->
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item">
-                            <a href="index.php?page=home" class="nav-link">
-                                <i class="nav-icon fas fa-home"></i>
-                                <p>Home</p>
-                            </a>
-                        </li>
                         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                             <li class="nav-item">
                                 <a href="index.php?page=add" class="nav-link">
@@ -77,13 +80,19 @@ if (session_status() == PHP_SESSION_NONE) {
                             </li>
                         <?php endif; ?>
 
-                            <li class="nav-item">
-                                <a href="index.php?page=view" class="nav-link">
-                                    <i class="nav-icon fas fa-eye"></i>
-                                    <p>View Videos</p>
-                                </a>
-                            </li>
-                        
+                        <li class="nav-item">
+                            <a href="index.php?page=view" class="nav-link">
+                                <i class="nav-icon fas fa-eye"></i>
+                                <p>View Videos</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="index.php?page=rented" class="nav-link">
+                                <i class="nav-icon fas fa-film"></i>
+                                <p>Rented Videos</p>
+                            </a>
+                        </li>
 
                         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                             <li class="nav-item">

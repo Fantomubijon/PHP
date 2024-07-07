@@ -22,10 +22,20 @@ if (isset($_GET['id']) && !isset($_GET['confirm'])) {
             <div class="card">
                 <div class="card-body">
                     <p class="card-text">Title: <?= htmlspecialchars($video['title']) ?></p>
-                    <p class="card-text">Director: <?= htmlspecialchars($video['director']) ?></p>
+                    <p class="card-text">Production: <?= htmlspecialchars($video['production']) ?></p>
                     <p class="card-text">Release Year: <?= htmlspecialchars($video['release_year']) ?></p>
-                    <p class="card-text">Price: <?= htmlspecialchars($video['price']) ?></p>
-                    <p class="card-text">Quantity: <?= htmlspecialchars($video['quantity']) ?></p>
+                    <p class="card-text">Genre: <?= htmlspecialchars($video['genre']) ?></p>
+                    <p class="card-text">Trailer Link: <?= htmlspecialchars($video['trailer_link']) ?></p>
+                    <p class="card-text">Duration: <?= htmlspecialchars($video['duration']) ?> minutes</p>
+                    <p class="card-text">Plot: <?= htmlspecialchars($video['plot']) ?></p>
+                    <p class="card-text">Blu-ray Copies: <?= htmlspecialchars($video['blu_ray_copies']) ?></p>
+                    <p class="card-text">Blu-ray Price: <?= htmlspecialchars($video['blu_ray_price']) ?></p>
+                    <p class="card-text">Blu-ray Late Fee: <?= htmlspecialchars($video['blu_ray_late_fee']) ?></p>
+                    <p class="card-text">DVD Copies: <?= htmlspecialchars($video['dvd_copies']) ?></p>
+                    <p class="card-text">DVD Price: <?= htmlspecialchars($video['dvd_price']) ?></p>
+                    <p class="card-text">DVD Late Fee: <?= htmlspecialchars($video['dvd_late_fee']) ?></p>
+                    <p class="card-text">Digital Link: <?= htmlspecialchars($video['digital_link']) ?></p>
+                    <p class="card-text">Digital Price: <?= htmlspecialchars($video['digital_price']) ?></p>
                 </div>
             </div>
             <div>
@@ -46,10 +56,10 @@ if (isset($_GET['id']) && !isset($_GET['confirm'])) {
     } else {
         setAlert('Failed to delete video. Video not found.', 'danger');
     }
-    header('Location: index.php?page=view'); // Redirect to the video list page
+    header('Location: index.php?page=view');
     exit();
 } else {
-    // No ID was provided or confirmation not set
+ 
     setAlert('No video ID specified.', 'danger');
     header('Location: index.php?page=view');
     exit();

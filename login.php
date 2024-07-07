@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['loggedin'] = true;
             $_SESSION['username'] = $username;
 
-            // Assign roles based on username
             if ($username == 'admin') {
                 $_SESSION['role'] = 'admin';
             } else {
