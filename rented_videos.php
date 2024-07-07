@@ -10,6 +10,19 @@ $user = getUserByUsername($username);
 $userId = $user['user_id'];
 
 $rentedVideos = getRentedVideosByUser($userId);
+
+// Update status to Expired for digital rentals if dueInDays < 0
+foreach ($rentedVideos as &$video) {
+    if ($video['format'] == 'digital' && $video['status'] == 'Valid') {
+        $dueInDays = intval($video['due_in_days']);
+        if ($dueInDays < 0) {
+            // Update status to Expired
+            $video['status'] = 'Expired';
+        }
+    }
+}
+unset($video); // Unset the reference
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -158,34 +171,52 @@ $rentedVideos = getRentedVideosByUser($userId);
             <div class="rented-videos">
                 <?php foreach ($rentedVideos as $video): ?>
                     <?php if (($video['format'] == 'blu_ray' || $video['format'] == 'dvd') && $video['status'] == 'Rented'): ?>
-    <div class="rented-video">
-        <div class="rented-video-overlay">
-            <a class="rented-video-button" href="index.php?page=return_video&id=<?= $video['rental_id'] ?>">Return</a>
-        </div>
-        <img src="uploads/<?= htmlspecialchars($video['image']) ?>" alt="<?= htmlspecialchars($video['title']) ?>">
-        <p><?= htmlspecialchars($video['title']) ?></p>
-        <p><?= htmlspecialchars(ucwords(str_replace('_', ' ', $video['format']))) ?></p>
-        <p>Quantity: <?= htmlspecialchars($video['quantity']) ?></p>
-        <p>DUE in <?= htmlspecialchars($video['due_in_days']) ?> days</p>
-    </div>
-<?php elseif ($video['format'] == 'digital' && $video['status'] == 'Valid'): ?>
-    <div class="rented-video">
-        <div class="rented-video-overlay">
-            <button class="rented-video-button" onclick="showQRCode('<?= htmlspecialchars($video['digital_link']) ?>')">View Link</button>
-        </div>
-        <img src="uploads/<?= htmlspecialchars($video['image']) ?>" alt="<?= htmlspecialchars($video['title']) ?>">
-        <p><?= htmlspecialchars($video['title']) ?></p>
-        <p>Digital</p>
-        <p>Valid till <?= htmlspecialchars($video['due_in_days']) ?> days</p>
-    </div>
-<?php endif; ?>
-
+                     <div class="rented-video">
+                            <div class="rented-video-overlay">
+                                <a class="rented-video-button" href="index.php?page=return_video&id=<?= $video['rental_id'] ?>">Return</a>
+                            </div>
+                            <img src="uploads/<?= htmlspecialchars($video['image']) ?>" alt="<?= htmlspecialchars($video['title']) ?>">
+                            <p><?= htmlspecialchars($video['title']) ?></p>
+                            <p><?= htmlspecialchars(ucwords(str_replace('_', ' ', $video['format']))) ?></p>
+                            <p>Quantity: <?= htmlspecialchars($video['quantity']) ?></p>
+                            <?php
+                            $dueInDays = htmlspecialchars($video['due_in_days']);
+                            if ($dueInDays < 0) {
+                                echo "<p>Overdue by " . abs($dueInDays) . " day(s)</p>";
+                            } else {
+                                echo "<p>Due in " . $dueInDays . " day(s)</p>";
+                            }
+                            ?>
+                        </div>
+                    <?php elseif ($video['format'] == 'digital' && ($video['status'] == 'Valid' || $video['status'] == 'Expired')): ?>
+                        <div class="rented-video">
+                            <div class="rented-video-overlay">
+                                <?php if ($video['status'] == 'Valid'): ?>
+                                    <button class="rented-video-button" onclick="showQRCode('<?= htmlspecialchars($video['digital_link']) ?>')">View Link</button>
+                                <?php elseif ($video['status'] == 'Expired'): ?>
+                                    <p class="expired-message">Expired</p>
+                                <?php endif; ?>
+                            </div>
+                            <img src="uploads/<?= htmlspecialchars($video['image']) ?>" alt="<?= htmlspecialchars($video['title']) ?>">
+                            <p><?= htmlspecialchars($video['title']) ?></p>
+                            <p>Digital</p>
+                            <?php
+                            $dueInDays = intval($video['due_in_days']);
+                            if ($dueInDays < 0) {
+                                echo "<p>Expired</p>";
+                            } else {
+                                echo "<p>Valid till " . $dueInDays . " day(s)</p>";
+                            }
+                            ?>
+                        </div>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
             <p>No videos rented.</p>
         <?php endif; ?>
     </div>
+
 
     <div id="qrModal" class="qr-modal">
         <div class="qr-modal-content">

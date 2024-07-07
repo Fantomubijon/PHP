@@ -37,6 +37,11 @@ if (session_status() == PHP_SESSION_NONE) {
             <ul class="navbar-nav ml-auto">
                 <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
                     <li class="nav-item">
+                        <a class="nav-link" href="index.php?page=profile">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="logout.php">Logout</a>
                     </li>
                 <?php else: ?>
@@ -61,50 +66,76 @@ if (session_status() == PHP_SESSION_NONE) {
             <div class="sidebar">
                 <!-- Sidebar user panel (optional) -->
                 <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
-                    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                        <div class="info">
-                            <a href="#" class="d-block">Hello, <?php echo $_SESSION['username']; ?>!</a>
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                            <div class="info">
+                                <a href="#" class="d-block">Hello, <?php echo $_SESSION['username']; ?></a>
+                            </div>
                         </div>
-                    </div>
+                        
+                        <!-- Sidebar Menu for Admin -->
+                        <nav class="mt-2">
+                            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                                <li class="nav-item">
+                                    <a href="index.php?page=add" class="nav-link">
+                                        <i class="nav-icon fas fa-plus"></i>
+                                        <p>Add Video</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="index.php?page=view" class="nav-link">
+                                        <i class="nav-icon fas fa-eye"></i>
+                                        <p>View Videos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="index.php?page=reports" class="nav-link">
+                                        <i class="nav-icon fas fa-chart-bar"></i>
+                                        <p>Reports</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="index.php?page=adminhistory" class="nav-link">
+                                        <i class="nav-icon fas fa-history"></i>
+                                        <p>Transaction History</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- /.sidebar-menu -->
+                    <?php else: ?>
+                        <!-- Sidebar Menu for Normal User -->
+                        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                            <div class="info">
+                                <a href="#" class="d-block">Hello, <?php echo $_SESSION['username']; ?>!</a>
+                            </div>
+                        </div>
+                        
+                        <nav class="mt-2">
+                            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                                <li class="nav-item">
+                                    <a href="index.php?page=view" class="nav-link">
+                                        <i class="nav-icon fas fa-eye"></i>
+                                        <p>View Videos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="index.php?page=rented" class="nav-link">
+                                        <i class="nav-icon fas fa-film"></i>
+                                        <p>Rented Videos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="index.php?page=history" class="nav-link">
+                                        <i class="nav-icon fas fa-history"></i>
+                                        <p>Transaction History</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- /.sidebar-menu -->
+                    <?php endif; ?>
                 <?php endif; ?>
-
-                <!-- Sidebar Menu -->
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                            <li class="nav-item">
-                                <a href="index.php?page=add" class="nav-link">
-                                    <i class="nav-icon fas fa-plus"></i>
-                                    <p>Add Video</p>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-
-                        <li class="nav-item">
-                            <a href="index.php?page=view" class="nav-link">
-                                <i class="nav-icon fas fa-eye"></i>
-                                <p>View Videos</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="index.php?page=rented" class="nav-link">
-                                <i class="nav-icon fas fa-film"></i>
-                                <p>Rented Videos</p>
-                            </a>
-                        </li>
-
-                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                            <li class="nav-item">
-                                <a href="index.php?page=report" class="nav-link">
-                                    <i class="nav-icon fas fa-chart-bar"></i>
-                                    <p>Reports</p>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
-                <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
         </aside>

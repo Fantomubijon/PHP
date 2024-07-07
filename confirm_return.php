@@ -25,7 +25,7 @@ if (isset($_GET['id'])) {
             incrementStock($videoId, 'dvd_copies', $quantity);
         } 
 
-        header('Location: return_success.php');
+        header('Location: index.php?page=return_success');
         exit;
     } else {
         echo '<p>Rental not found.</p>';

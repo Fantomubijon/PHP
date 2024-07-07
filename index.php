@@ -87,8 +87,24 @@ if (!in_array($page, $allowedPages[$_SESSION['role']])) {
                             break;  
                                case 'reciept':
                             include 'reciept.php';
+                              case 'pay_late_fee':
+                            include 'pay_late_fee.php';
+                                   case 'return_success':
+                            include 'return_success.php';
+
+                             case 'history':
+                            include 'history.php';
+                            
+                             case 'adminhistory':
+                            include 'adminhistory.php';
                             break;  
-                        
+                         case 'profile':
+                            include 'profile.php';
+                            break;  
+
+                             case 'reports':
+                            include 'reports.php';
+                            break;  
                         default:
                             echo '<div class="alert alert-info">Welcome to the Video Rental System, ' . htmlspecialchars($_SESSION['username']) . '!</div>';
                             break;

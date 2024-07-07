@@ -254,15 +254,20 @@ $('#confirmRentBtn').click(function() {
         return;
     }
 
-    if (paymentMethod === 'cash' && (parseFloat($('#cash_amount').val()) < parseFloat($('#total_price').val()))) {
+if (paymentMethod === 'cash') {
+    var cashAmount = $('#cash_amount').val();
+    if (!cashAmount || parseFloat(cashAmount) < parseFloat($('#total_price').val())) {
         alert('Cash amount must be greater than or equal to total price.');
         return;
     }
+}
 
     // Confirmation prompt
     var confirmRent = confirm('Are you sure you want to rent the video?');
     if (!confirmRent) {
         return;
+    } else {
+        alert('Video Successfully Rented');
     }
 
     // Set the form action dynamically
