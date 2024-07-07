@@ -10,126 +10,190 @@ $user = getUserByUsername($username);
 $userId = $user['user_id'];
 
 $rentedVideos = getRentedVideosByUser($userId);
-
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rented Videos</title>
-<style>
-    .qr-modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-        text-align: center;
-        padding-top: 60px;
-    }
-    .qr-modal-content {
-        margin: 5% auto;
-        padding: 20px;
-        border: none; /* Remove border for a cleaner look */
-        width: 60%; /* Adjust modal width as needed */
-        max-width: 600px; /* Max width to ensure modal is viewable */
-        background-color: #fff;
-        position: relative;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .qr-modal-content .close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        color: #aaa;
-        cursor: pointer;
-    }
-    .qr-modal-content img {
-        max-width: 80%; /* Ensure QR code image fits within modal */
-        height: auto;
-        display: block;
-        margin: 0 auto;
-    }
-    .qr-modal-content p {
-        margin-top: 10px;
-    }
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
 
-    .rented-video {
-        position: relative;
-        display: inline-block;
-        width: 188px;
-        margin: 10px;
-        vertical-align: top;
-    }
-    .rented-video:hover .rented-video-overlay {
-        display: block;
-    }
-    .rented-video-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
-        display: none;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
-    .rented-video-button {
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        padding: 8px 16px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 14px;
-        margin-top: 10px;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
 
+        h1 {
+            margin-top: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .rented-videos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .rented-video {
+            position: relative;
+            width: 200px;
+            margin: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .rented-video:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .rented-video img {
+            width: 100%;
+            height: auto;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .rented-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .rented-video:hover .rented-video-overlay {
+            opacity: 1;
+        }
+
+        .rented-video-button {
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .rented-video p {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .qr-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            text-align: center;
+            padding-top: 60px;
+        }
+
+        .qr-modal-content {
+            margin: 5% auto;
+            padding: 20px;
+            border: none;
+            width: 60%;
+            max-width: 600px;
+            background-color: #fff;
+            position: relative;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .qr-modal-content .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .qr-modal-content img {
+            max-width: 80%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .qr-modal-content p {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
-   <div class="container">
-    <h1>Rented Videos</h1>
-    <?php if (!empty($rentedVideos)): ?>
-        <div class="rented-videos">
-            <?php foreach ($rentedVideos as $video): ?>
-                <div class="rented-video">
-                    <div class="rented-video-overlay">
-                        <?php if ($video['format'] == 'digital'): ?>
-                            <button class="rented-video-button" onclick="showQRCode('<?= htmlspecialchars($video['digital_link']) ?>')">View Link</button>
-                        <?php else: ?>
-                            <a class="rented-video-button" href="#">Return</a>
-                        <?php endif; ?>
-                    </div>
-                    <img src="uploads/<?= htmlspecialchars($video['image']) ?>" alt="<?= htmlspecialchars($video['title']) ?>" style="height: 282px;">
-                    <p><?= htmlspecialchars($video['title']) ?></p>
-                    <p>DUE in <?= htmlspecialchars($video['due_in_days']) ?> days</p>
-                </div>
-            <?php endforeach; ?>
+    <div class="container">
+        <h1>Rented Videos</h1>
+        <?php if (!empty($rentedVideos)): ?>
+            <div class="rented-videos">
+                <?php foreach ($rentedVideos as $video): ?>
+                    <?php if (($video['format'] == 'blu_ray' || $video['format'] == 'dvd') && $video['status'] == 'Rented'): ?>
+    <div class="rented-video">
+        <div class="rented-video-overlay">
+            <a class="rented-video-button" href="index.php?page=return_video&id=<?= $video['rental_id'] ?>">Return</a>
         </div>
-    <?php else: ?>
-        <p>No videos rented.</p>
-    <?php endif; ?>
-</div>
-
-
-<div id="qrModal" class="qr-modal">
-    <div class="qr-modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img id="qrImage" src="img/LinkQR.png" alt="QR Code">
-        <p id="digitalLink"></p>
+        <img src="uploads/<?= htmlspecialchars($video['image']) ?>" alt="<?= htmlspecialchars($video['title']) ?>">
+        <p><?= htmlspecialchars($video['title']) ?></p>
+        <p><?= htmlspecialchars(ucwords(str_replace('_', ' ', $video['format']))) ?></p>
+        <p>Quantity: <?= htmlspecialchars($video['quantity']) ?></p>
+        <p>DUE in <?= htmlspecialchars($video['due_in_days']) ?> days</p>
     </div>
-</div>
+<?php elseif ($video['format'] == 'digital' && $video['status'] == 'Valid'): ?>
+    <div class="rented-video">
+        <div class="rented-video-overlay">
+            <button class="rented-video-button" onclick="showQRCode('<?= htmlspecialchars($video['digital_link']) ?>')">View Link</button>
+        </div>
+        <img src="uploads/<?= htmlspecialchars($video['image']) ?>" alt="<?= htmlspecialchars($video['title']) ?>">
+        <p><?= htmlspecialchars($video['title']) ?></p>
+        <p>Digital</p>
+        <p>Valid till <?= htmlspecialchars($video['due_in_days']) ?> days</p>
+    </div>
+<?php endif; ?>
 
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <p>No videos rented.</p>
+        <?php endif; ?>
+    </div>
+
+    <div id="qrModal" class="qr-modal">
+        <div class="qr-modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img id="qrImage" src="img/LinkQR.png" alt="QR Code">
+            <p id="digitalLink"></p>
+        </div>
+    </div>
 
     <script>
         function showQRCode(link) {

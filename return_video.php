@@ -1,4 +1,3 @@
-// return_video.php
 <?php
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -6,57 +5,69 @@ if (session_status() == PHP_SESSION_NONE) {
 
 require_once 'functions.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $rentalId = $_POST['rental_id'];
+// Check if rental ID is provided
+if (isset($_GET['id'])) {
+    $rentalId = htmlspecialchars($_GET['id']);
     $rental = getRentalById($rentalId);
 
     if ($rental) {
-        $returnDate = date('Y-m-d');
-        $dueDate = $rental['return_date'];
-        $lateFee = 0;
+        $videoId = $rental['video_id'];
+        $video = getVideoById($videoId);
 
-        if (strtotime($returnDate) > strtotime($dueDate)) {
-            $daysLate = (strtotime($returnDate) - strtotime($dueDate)) / (60 * 60 * 24);
-            switch ($rental['format']) {
-                case 'blu_ray':
-                    $lateFee = $daysLate * $rental['blu_ray_late_fee'];
-                    break;
-                case 'dvd':
-                    $lateFee = $daysLate * $rental['dvd_late_fee'];
-                    break;
-            }
+        // Calculate due date and check if overdue
+        $dueDate = strtotime($rental['return_date']);
+        $today = strtotime(date('Y-m-d'));
+        $daysLate = max(0, floor(($today - $dueDate) / (60 * 60 * 24)));
+        $isOverdue = ($daysLate > 0);
+
+        // Determine action button text and link based on overdue status
+        if ($isOverdue) {
+            $actionText = "Pay Late Fee";
+            $actionLink = "pay_late_fee.php?id={$rentalId}";
+        } else {
+            $actionText = "Confirm Return";
+            $actionLink = "confirm_return.php?id={$rentalId}";
         }
 
-        if ($rental['format'] !== 'digital') {
-            switch ($rental['format']) {
-                case 'blu_ray':
-                    $newStock = $rental['blu_ray_copies'] + $rental['quantity'];
-                    $stmt = $conn->prepare("UPDATE videos SET blu_ray_copies = ? WHERE video_id = ?");
-                    break;
-                case 'dvd':
-                    $newStock = $rental['dvd_copies'] + $rental['quantity'];
-                    $stmt = $conn->prepare("UPDATE videos SET dvd_copies = ? WHERE video_id = ?");
-                    break;
-            }
-            $stmt->bind_param("ii", $newStock, $rental['video_id']);
-            $stmt->execute();
-        }
-
-        $stmt = $conn->prepare("UPDATE rentals SET status = 'returned', return_date = ?, late_fee = ? WHERE rental_id = ?");
-        $stmt->bind_param("sdi", $returnDate, $lateFee, $rentalId);
-        $stmt->execute();
-
-        $_SESSION['alert'] = ['message' => 'Return processed successfully.', 'type' => 'success'];
-        header('Location: index.php?page=view');
-        exit;
+        // Display confirmation details
+        ?>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Return Video</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                .details {
+                    margin-bottom: 20px;
+                }
+                .overdue {
+                    color: red;
+                }
+                .not-overdue {
+                    color: green;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Return Video</h1>
+                <div class="details">
+                    <p>Video Title: <?= htmlspecialchars($video['title']) ?></p>
+                    <p>Due Date: <?= date('Y-m-d', $dueDate) ?></p>
+                    <p>Days Late: <?= $daysLate ?></p>
+                    <p>Status: <?= $isOverdue ? '<span class="overdue">Overdue</span>' : '<span class="not-overdue">Not Overdue</span>' ?></p>
+                </div>
+                <a class="btn btn-primary" href="<?= $actionLink ?>"><?= $actionText ?></a>
+            </div>
+        </body>
+        </html>
+        <?php
     } else {
-        $_SESSION['alert'] = ['message' => 'Rental not found.', 'type' => 'danger'];
-        header('Location: index.php?page=view');
-        exit;
+        echo '<p>Rental not found.</p>';
     }
 } else {
-    $_SESSION['alert'] = ['message' => 'Invalid request.', 'type' => 'danger'];
-    header('Location: index.php?page=view');
-    exit;
+    echo '<p>No rental ID provided.</p>';
 }
 ?>

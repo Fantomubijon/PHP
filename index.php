@@ -82,7 +82,9 @@ if (!in_array($page, $allowedPages[$_SESSION['role']])) {
                          case 'rented':
                             include 'rented_videos.php';
                             break;   
-                            
+                        case 'return_video':
+                            include 'return_video.php';
+                            break;  
                                case 'reciept':
                             include 'reciept.php';
                             break;  

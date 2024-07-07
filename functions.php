@@ -138,17 +138,22 @@ function deleteVideo($id) {
 }
 
 
-// functions.php
 function getRentedVideosByUser($userId) {
-    global $conn;
-    $stmt = $conn->prepare("SELECT v.image, v.title, r.format, DATEDIFF(r.return_date, CURDATE()) AS due_in_days, v.digital_link 
+    global $conn; // Assuming $conn is your database connection
+
+    $stmt = $conn->prepare("SELECT v.image, v.title, r.format, r.status, DATEDIFF(r.return_date, CURDATE()) AS due_in_days, v.digital_link, r.rental_id,r.quantity 
                             FROM rentals r
                             JOIN videos v ON r.video_id = v.video_id
                             WHERE r.user_id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $result = $stmt->get_result();
-    $videos = $result->fetch_all(MYSQLI_ASSOC);
+
+    $videos = [];
+    while ($row = $result->fetch_assoc()) {
+        $videos[] = $row;
+    }
+
     $stmt->close();
     return $videos;
 }
@@ -174,14 +179,16 @@ function createRental($userId, $videoId, $format, $quantity, $totalPrice) {
 }
 
 // Fetch rental details by ID
+// Fetch rental details by ID
 function getRentalById($rentalId) {
     global $conn;
-    $stmt = $conn->prepare("SELECT r.*, v.title, v.blu_ray_price, v.dvd_price, v.digital_price FROM rentals r JOIN videos v ON r.video_id = v.id WHERE r.id = ?");
+    $stmt = $conn->prepare("SELECT r.*, v.title, v.blu_ray_price, v.dvd_price, v.digital_price, DATEDIFF(r.return_date, CURDATE()) AS due_in_days FROM rentals r JOIN videos v ON r.video_id = v.video_id WHERE r.rental_id = ?");
     $stmt->bind_param('i', $rentalId);
     $stmt->execute();
     $result = $stmt->get_result();
     return $result->fetch_assoc();
 }
+
 
 function getUserByUsername($username) {
     global $conn;
@@ -193,6 +200,17 @@ function getUserByUsername($username) {
     $stmt->close();
     return $user;
 }
+
+
+function updateRentalStatus($rentalId, $status) {
+    global $conn;
+    $sql = "UPDATE rentals SET status = ? WHERE rental_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('si', $status, $rentalId);
+    $stmt->execute();
+    $stmt->close();
+}
+
 
 ?>
 
