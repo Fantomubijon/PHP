@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 05, 2024 at 05:35 PM
+-- Generation Time: Jul 07, 2024 at 05:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -48,7 +48,9 @@ CREATE TABLE `rentals` (
   `rental_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `return_date` timestamp NULL DEFAULT NULL,
   `total_amount` decimal(10,2) NOT NULL,
-  `status` enum('Rented','Returned') DEFAULT 'Rented'
+  `status` varchar(255) DEFAULT NULL,
+  `format` varchar(255) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -68,14 +70,6 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`user_id`, `name`, `address`, `phone`, `email`, `username`, `password`, `created_at`) VALUES
-(5, 'Master Admin', 'Admin Address', '123456789', 'admin@example.com', 'admin', 'PUIHAHAadmin', '2024-07-05 11:12:33'),
-(6, 'Carl Allen Torno', '829 Bohol Street, Sampaloc', '09761022296', 'ctorno130@gmail.com', 'yshie', 'yshie', '2024-07-05 11:21:51');
-
 -- --------------------------------------------------------
 
 --
@@ -85,24 +79,23 @@ INSERT INTO `users` (`user_id`, `name`, `address`, `phone`, `email`, `username`,
 CREATE TABLE `videos` (
   `video_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `director` varchar(100) NOT NULL,
+  `production` varchar(255) DEFAULT NULL,
   `release_year` int(11) NOT NULL,
-  `format` varchar(50) NOT NULL DEFAULT 'DVD',
   `genre` varchar(255) NOT NULL,
-  `price` decimal(8,2) NOT NULL,
-  `quantity` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `image` varchar(255) DEFAULT NULL
+  `image` varchar(255) DEFAULT NULL,
+  `blu_ray_copies` int(11) DEFAULT NULL,
+  `blu_ray_price` decimal(10,2) DEFAULT NULL,
+  `blu_ray_late_fee` decimal(10,2) DEFAULT NULL,
+  `dvd_copies` int(11) DEFAULT NULL,
+  `dvd_price` decimal(10,2) DEFAULT NULL,
+  `dvd_late_fee` decimal(10,2) DEFAULT NULL,
+  `digital_link` varchar(255) DEFAULT NULL,
+  `digital_price` decimal(10,2) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL,
+  `trailer_link` varchar(255) DEFAULT NULL,
+  `plot` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `videos`
---
-
-INSERT INTO `videos` (`video_id`, `title`, `director`, `release_year`, `format`, `genre`, `price`, `quantity`, `created_at`, `image`) VALUES
-(19, 'Pacific rim', 'Chris Renaud', 2024, 'DVD', 'Sci-Fi', 213.00, 232, '2024-07-05 08:50:44', 'R.jfif'),
-(20, 'Whisper of the heart', 'Yoshifumi Kondo', 1996, 'DVD', 'Animation', 29.00, 500, '2024-07-05 08:57:16', 'Studio.jfif'),
-(21, 'a', 's', 2, 'DVD', '2', 2.00, 2, '2024-07-05 14:16:17', 'Ultraman.jfif');
 
 --
 -- Indexes for dumped tables
@@ -157,13 +150,13 @@ ALTER TABLE `rentals`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `videos`
 --
 ALTER TABLE `videos`
-  MODIFY `video_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `video_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
